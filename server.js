@@ -26,12 +26,8 @@ app.use(cors());
 app.use(express.static('website'));
 
 //the routes of the app
-app.get('/', (req, res) => {
-	console.log('this is the get route');
-	res.send(projectData);
-});
 
-app.post('/', (req, res) => {
+app.post('/add', (req, res) => {
 	let data = req.body;
 
 	projectData = {
@@ -40,6 +36,10 @@ app.post('/', (req, res) => {
 		user: data.user
 	};
 	console.log(projectData);
+	res.send(projectData);
+});
+app.get('/all', (req, res) => {
+	console.log('this is the get route');
 	res.send(projectData);
 });
 

@@ -5,8 +5,26 @@ const key = '2af85d77026a9c00d226ea7dbe247257';
 const baseurl = `https://api.openweathermap.org/data/2.5/weather?zip=94040,us&appid=${key}`;
 const api = 'http://localhost:8080/';
 
+const postData = async (url, data) => {
+	const res = await fetch(url, {
+		method: 'POST',
+		credentials: 'same-origin',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	});
+	try {
+		const newData = await res.json();
+		return newData;
+	} catch (err) {
+		console.log('error', err);
+	}
+	// // console.log(res);
+};
+
 const getData = async (url, usr) => {
-	const res = await fetch(url, { method: 'GET' });
+	const res = await fetch(url);
 	try {
 		const data = await res.json();
 		data.user = usr;
@@ -20,25 +38,14 @@ const getData = async (url, usr) => {
 	}
 };
 
-const postData = async (url, data) => {
-	const res = await fetch(url, {
-		method: 'POST',
-		credentials: 'same-origin',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(data)
-	});
-	// // console.log(res);
-	return res;
-};
-
 document.getElementById('generate').addEventListener('click', () => {
 	getData(baseurl, 'some user data')
 		.then((data) => {
-			postData(api, data);
+			postData('http://localhost:8080/add', data);
 		})
-		.then(updateUI(api))
+		.then(() => {
+			updateUI('http://localhost:8080/all');
+		})
 		.catch((error) => console.log('Error', error));
 });
 
@@ -56,10 +63,7 @@ document.getElementById('generate').addEventListener('click', () => {
 // });
 
 const updateUI = async (url) => {
-	const res = await fetch(url, {
-		method: 'GET',
-		credentials: 'same-origin'
-	});
+	const res = await fetch(url);
 
 	const data = await res.json();
 	console.log(data);
