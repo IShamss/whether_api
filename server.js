@@ -39,7 +39,8 @@ app.post('/add', (req, res) => {
 	res.send(projectData);
 });
 app.get('/all', (req, res) => {
-	console.log('this is the get route');
+	// console.log('this is the get route');
+	console.log(projectData);
 	res.send(projectData);
 });
 

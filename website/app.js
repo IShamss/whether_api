@@ -1,9 +1,23 @@
 /* Global Variables */
 //credentials
 const key = '2af85d77026a9c00d226ea7dbe247257';
-// let zip;
-const baseurl = `https://api.openweathermap.org/data/2.5/weather?zip=94040,us&appid=${key}`;
+
 const api = 'http://localhost:8080/';
+
+document.getElementById('generate').addEventListener('click', () => {
+	let user = document.getElementById('feelings').value;
+	const zip = document.getElementById('zip').value;
+	console.log(zip);
+	const baseurl = `https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&appid=${key}`;
+	getData(baseurl, user)
+		.then((data) => {
+			postData(api + 'add', data);
+		})
+		.then(() => {
+			updateUI(api + 'all');
+		})
+		.catch((error) => console.log('Error', error));
+});
 
 const postData = async (url, data) => {
 	const res = await fetch(url, {
@@ -26,28 +40,21 @@ const postData = async (url, data) => {
 const getData = async (url, usr) => {
 	const res = await fetch(url);
 	try {
-		const data = await res.json();
+		let data = await res.json();
 		data.user = usr;
 		let d = new Date();
 		let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
 		data.date = newDate;
+		// data = {
+		// 	date: newDate,
+		// 	user: document.getElementById('feelings').value
+		// };
 		// console.log(data);
 		return data;
 	} catch (err) {
 		console.log('Error', err);
 	}
 };
-
-document.getElementById('generate').addEventListener('click', () => {
-	getData(baseurl, 'some user data')
-		.then((data) => {
-			postData('http://localhost:8080/add', data);
-		})
-		.then(() => {
-			updateUI('http://localhost:8080/all');
-		})
-		.catch((error) => console.log('Error', error));
-});
 
 // event listener to run the asynchronus function
 // document.getElementById('generate').addEventListener('click', (e) => {
@@ -64,7 +71,6 @@ document.getElementById('generate').addEventListener('click', () => {
 
 const updateUI = async (url) => {
 	const res = await fetch(url);
-
 	const data = await res.json();
 	console.log(data);
 	document.getElementById('date').innerText = data.date;
